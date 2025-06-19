@@ -1,50 +1,58 @@
 // File: script.js
 
-const productList = document.getElementById("product-list");
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("/api/products")
+    .then((res) => res.json())
+    .then((products) => {
+      const productContainer = document.getElementById("product-list");
 
-fetch("http://localhost:5000/api/products")
-  .then(res => res.json())
-  .then(products => {
-    products.forEach(product => {
-      const card = document.createElement("div");
-      card.className = "border rounded-lg p-4 shadow hover:shadow-lg transition";
+      products.forEach((product) => {
+        const div = document.createElement("div");
+        div.className = "border p-4 rounded shadow mb-4 bg-white";
 
-      card.innerHTML = `
-        <img src="https://via.placeholder.com/150" alt="${product.name}" class="w-full rounded mb-4">
-        <h3 class="text-lg font-semibold">${product.name}</h3>
-        <p class="text-gray-600 font-medium mb-2">₹${product.price}/kg</p>
-        <button class="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800 add-to-cart">
-          Add to Cart
-        </button>
-      `;
+        div.innerHTML = `
+          <h3 class="text-xl font-bold mb-2">${product.name}</h3>
+          <p class="mb-2">Price: ₹${product.price}/kg</p>
+          <input 
+            type="number" 
+            min="0.25" 
+            step="0.25" 
+            value="1" 
+            class="quantity-input border px-2 py-1 rounded w-24"
+          />
+          <button 
+            class="add-to-cart bg-green-600 text-white px-4 py-2 rounded ml-2 hover:bg-green-700">
+            Add to Cart
+          </button>
+        `;
 
-      productList.appendChild(card);
+        productContainer.appendChild(div);
 
-      // Add to Cart button logic
-      const addButton = card.querySelector(".add-to-cart");
-      addButton.addEventListener("click", () => {
-        addToCart(product);
+        const addButton = div.querySelector(".add-to-cart");
+        const quantityInput = div.querySelector(".quantity-input");
+
+        addButton.addEventListener("click", () => {
+          const quantity = parseFloat(quantityInput.value);
+          if (isNaN(quantity) || quantity <= 0) {
+            alert("Please enter a valid quantity.");
+            return;
+          }
+
+          const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+          cart.push({
+            name: product.name,
+            price: product.price,
+            quantity,
+          });
+          localStorage.setItem("cart", JSON.stringify(cart));
+
+          alert(`${product.name} (${quantity}kg) added to cart!`);
+          // ✅ Fix: Navigate to cart page properly
+          window.location.href = "cart.html";
+        });
       });
+    })
+    .catch((err) => {
+      console.error("❌ Failed to load products:", err);
     });
-  })
-  .catch(error => {
-    console.error("Error fetching products:", error);
-    productList.innerHTML = `<p class="text-red-600 text-center">Failed to load products.</p>`;
-  });
-
-
-// Add to Cart function using localStorage
-function addToCart(product) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  // Check if item already exists
-  const existingItem = cart.find(item => item.id === product.id);
-  if (existingItem) {
-    existingItem.quantity += 1;
-  } else {
-    cart.push({ ...product, quantity: 1 });
-  }
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-  alert(`${product.name} added to cart!`);
-}
+});

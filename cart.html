@@ -2,138 +2,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Cart | Fresh Flesh</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart - Fresh Flesh</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="bg-white text-gray-800">
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+    <h2 class="text-2xl font-bold mb-4">🛒 Your Cart</h2>
+    <div id="cart-items" class="space-y-4"></div>
 
-  <!-- Header -->
-  <header class="bg-red-700 text-white px-6 py-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold">Fresh Flesh</h1>
-    <nav>
-      <ul class="flex gap-4">
-        <li><a href="index.html" class="hover:underline">Home</a></li>
-        <li><a href="cart.html" class="hover:underline font-semibold">Cart</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <!-- Cart Content -->
-  <section class="py-12 px-6 max-w-4xl mx-auto">
-    <h2 class="text-3xl font-bold text-center mb-8">Your Cart</h2>
-    <div id="cart-items" class="space-y-6">
-      <!-- Items will be inserted here -->
+    <div class="mt-4 font-semibold">
+      Total: ₹<span id="total-price">0</span>
     </div>
-    <!-- Total and Checkout Form -->
-<div class="mt-8 border-t pt-6">
-  <div class="text-right text-xl font-semibold mb-4">
-    Total Bill: ₹<span id="total-bill">0</span>
+
+    <div class="mt-6">
+      <a href="order.html" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Proceed to Order</a>
+    </div>
   </div>
-
-  <h3 class="text-lg font-bold mb-2">Delivery Details</h3>
-  <form id="checkout-form" class="space-y-4">
-    <input type="text" id="customer-name" placeholder="Your Name" required
-           class="w-full border rounded px-4 py-2" />
-    <textarea id="customer-address" placeholder="Delivery Address" required
-              class="w-full border rounded px-4 py-2 h-24"></textarea>
-    <button type="submit"
-            class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
-      Place Order
-    </button>
-  </form>
-
-  <div id="confirmation" class="mt-6 text-green-700 font-semibold hidden">
-    ✅ Your order has been placed successfully!
-  </div>
-</div>
-
-  </section>
 
   <script>
-    const cartItemsContainer = document.getElementById("cart-items");
-    const totalBillEl = document.getElementById("total-bill");
+    document.addEventListener("DOMContentLoaded", () => {
+      const cartItemsDiv = document.getElementById("cart-items");
+      const totalPriceSpan = document.getElementById("total-price");
 
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    function updateCart() {
-      cartItemsContainer.innerHTML = "";
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
       let total = 0;
 
+      if (cart.length === 0) {
+        cartItemsDiv.innerHTML = "<p>Your cart is empty.</p>";
+        return;
+      }
+
       cart.forEach((item, index) => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
 
-        const itemCard = document.createElement("div");
-        itemCard.className = "border p-4 rounded shadow flex justify-between items-center";
+        const div = document.createElement("div");
+        div.className = "border p-4 rounded bg-gray-50 flex justify-between items-center";
 
-        itemCard.innerHTML = `
+        div.innerHTML = `
           <div>
-            <h3 class="text-lg font-semibold">${item.name}</h3>
-            <p class="text-gray-600">₹${item.price}/kg</p>
-            <div class="mt-2 flex items-center gap-2">
-              <button class="px-2 py-1 bg-red-700 text-white rounded" onclick="changeQuantity(${index}, -1)">-</button>
-              <span>${item.quantity}</span>
-              <button class="px-2 py-1 bg-red-700 text-white rounded" onclick="changeQuantity(${index}, 1)">+</button>
-            </div>
+            <p class="font-bold">${item.name} (${item.quantity}kg)</p>
+            <p>₹${item.price} x ${item.quantity} = ₹${subtotal.toFixed(2)}</p>
           </div>
-          <div class="text-right">
-            <p class="text-sm text-gray-500">Total</p>
-            <p class="text-lg font-bold">₹${itemTotal}</p>
-          </div>
+          <button class="delete-item text-red-600 font-bold" data-index="${index}">❌</button>
         `;
 
-        cartItemsContainer.appendChild(itemCard);
+        cartItemsDiv.appendChild(div);
       });
 
-      totalBillEl.textContent = total;
-      localStorage.setItem("cart", JSON.stringify(cart));
-    }
+      totalPriceSpan.textContent = total.toFixed(2);
 
-    function changeQuantity(index, delta) {
-      cart[index].quantity += delta;
-      if (cart[index].quantity <= 0) {
-        cart.splice(index, 1); // remove item if quantity is 0
-      }
-      updateCart();
-    }
-
-    updateCart();
-    // Handle order form submission
-document.getElementById("checkout-form").addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  const name = document.getElementById("customer-name").value.trim();
-  const address = document.getElementById("customer-address").value.trim();
-
-  if (!name || !address || cart.length === 0) {
-    alert("Please fill all fields and make sure cart is not empty.");
-    return;
-  }
-
-  const order = {
-    customer: name,
-    address: address,
-    cart: cart,
-    total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    time: new Date().toLocaleString()
-  };
-
-  // For now, save the order locally (simulate backend)
-  let orders = JSON.parse(localStorage.getItem("orders")) || [];
-  orders.push(order);
-  localStorage.setItem("orders", JSON.stringify(orders));
-
-  // Clear cart
-  localStorage.removeItem("cart");
-  cart = [];
-  updateCart();
-
-  document.getElementById("checkout-form").reset();
-  document.getElementById("confirmation").classList.remove("hidden");
-});
-
+      // Handle deletion
+      document.querySelectorAll(".delete-item").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const index = btn.getAttribute("data-index");
+          cart.splice(index, 1);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          location.reload();
+        });
+      });
+    });
   </script>
 </body>
 </html>

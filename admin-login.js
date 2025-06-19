@@ -6,11 +6,14 @@ document.getElementById("admin-login-form").addEventListener("submit", function 
   const username = document.getElementById("admin-username").value.trim();
   const password = document.getElementById("admin-password").value.trim();
 
-  // Hardcoded admin credentials
+  // ✅ Your custom admin credentials
   if (username === "admin" && password === "flesh123") {
+    // Save login session in localStorage
     localStorage.setItem("adminLoggedIn", "true");
-    window.location.href = "admin-dashboard.html";
+    // Redirect to the admin dashboard
+    window.location.href = "admin-dashboard.html"; // ✅ Match the correct file name
   } else {
-    document.getElementById("admin-error").classList.remove("hidden");
+    // Show error message
+    document.getElementById("admin-login-error").classList.remove("hidden");
   }
 });

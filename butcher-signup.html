@@ -1,0 +1,22 @@
+<!-- File: butcher-signup.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Butcher Sign Up</title>
+  <script src="butcher-signup.js" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <form id="signup-form" class="bg-white p-6 rounded shadow w-96 space-y-4">
+    <h2 class="text-2xl font-bold mb-4 text-center">Butcher Sign Up</h2>
+
+    <input type="text" id="signup-name" required placeholder="Name" class="w-full p-2 border rounded" />
+    <input type="tel" id="signup-mobile" required placeholder="Mobile Number" class="w-full p-2 border rounded" />
+    <input type="password" id="signup-password" required placeholder="Password" class="w-full p-2 border rounded" />
+
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 w-full rounded hover:bg-green-700">Sign Up</button>
+
+    <p class="text-center text-sm">Already have an account? <a href="butcher-login.html" class="text-blue-600 underline">Login</a></p>
+  </form>
+</body>
+</html>

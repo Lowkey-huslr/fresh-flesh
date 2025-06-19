@@ -64,6 +64,11 @@
       const products = JSON.parse(localStorage.getItem(productKey)) || [];
       productList.innerHTML = "";
 
+      if (products.length === 0) {
+        productList.innerHTML = `<li class="text-gray-500">No products added.</li>`;
+        return;
+      }
+
       products.forEach((p, i) => {
         const li = document.createElement("li");
         li.className = "border p-4 rounded flex justify-between items-center";
@@ -136,10 +141,16 @@
         const li = document.createElement("li");
         li.className = "border p-4 rounded";
 
+        let itemsHTML = "";
+        order.items.forEach(i => {
+          itemsHTML += `<li>${i.name} - ${i.qty}kg - ₹${i.price * i.qty}</li>`;
+        });
+
         li.innerHTML = `
           <p><strong>Customer:</strong> ${order.customerName}</p>
-          <p><strong>Location:</strong> ${order.address}</p>
-          <p><strong>Items:</strong> ${order.items.map(i => `${i.name} x${i.qty}kg`).join(", ")}</p>
+          <p><strong>Phone:</strong> ${order.phone}</p>
+          <p><strong>Address:</strong> ${order.address}</p>
+          <ul class="list-disc list-inside mt-2">${itemsHTML}</ul>
         `;
 
         orderList.appendChild(li);

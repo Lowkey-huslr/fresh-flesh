@@ -11,12 +11,10 @@ document.getElementById("login-form").addEventListener("submit", function (e) {
   const found = butchers.find(b => b.mobile === mobile && b.password === password);
 
   if (found) {
-    // Store login session
     localStorage.setItem("butcherLoggedIn", JSON.stringify({
       mobile: found.mobile,
       name: found.name
     }));
-
     window.location.href = "butcher-dashboard.html";
   } else {
     document.getElementById("login-error").classList.remove("hidden");

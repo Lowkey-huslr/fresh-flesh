@@ -1,8 +1,8 @@
 // File: backend/server.js
-
 const express = require("express");
 const cors = require("cors");
-const sendSMS = require("./smsSender");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,60 +11,74 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Dummy product data (used for /api/products)
+// Path to orders.json file
+const ORDERS_FILE = path.join(__dirname, "orders.json");
+
+// Dummy product list (for testing API)
 const products = [
   { id: 1, name: "Chicken", price: 250 },
   { id: 2, name: "Mutton", price: 900 },
-  { id: 3, name: "Fish", price: 200 }
+  { id: 3, name: "Fish", price: 200 },
 ];
 
-// Root route
+// Ensure orders.json exists
+if (!fs.existsSync(ORDERS_FILE)) {
+  fs.writeFileSync(ORDERS_FILE, JSON.stringify([]));
+}
+
+// Routes
 app.get("/", (req, res) => {
-  res.send("🐔 Fresh Flesh API is running!");
+  res.send("🐔 Fresh Flesh Backend is Live!");
 });
 
-// Product list endpoint
+// Product List
 app.get("/api/products", (req, res) => {
   res.json(products);
 });
 
-// ✅ Route to send OTP using GET method
-app.get("/send-otp", async (req, res) => {
-  const { mobile } = req.query;
+// Save new order
+app.post("/api/orders", (req, res) => {
+  const { customerName, phone, address, items } = req.body;
 
-  if (!mobile || !/^91\d{10}$/.test(mobile)) {
-    return res.status(400).json({ success: false, message: "Invalid or missing mobile number" });
+  if (!customerName || !phone || !address || !items || items.length === 0) {
+    return res.status(400).json({ error: "Missing order details." });
   }
 
-  const otp = Math.floor(100000 + Math.random() * 900000); // 6-digit OTP
+  const order = {
+    id: Date.now(),
+    customerName,
+    phone,
+    address,
+    items,
+    createdAt: new Date().toISOString(),
+  };
 
-  try {
-    await sendSMS(mobile, `Your OTP is ${otp}`);
-    res.json({ success: true, otp }); // You can remove otp from response in production
-  } catch (err) {
-    console.error("❌ SMS sending failed:", err);
-    res.status(500).json({ success: false, message: "Failed to send OTP" });
-  }
+  const orders = JSON.parse(fs.readFileSync(ORDERS_FILE));
+  orders.push(order);
+  fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+
+  res.json({ success: true, order });
 });
 
-// ✅ Optional: POST route to send custom message
-app.post("/api/send-sms", async (req, res) => {
-  const { number, message } = req.body;
-
-  if (!number || !message) {
-    return res.status(400).json({ error: "Missing number or message" });
-  }
-
-  try {
-    await sendSMS(number, message);
-    res.json({ success: true });
-  } catch (err) {
-    console.error("❌ SMS error:", err);
-    res.status(500).json({ success: false, error: "Failed to send SMS" });
-  }
+// Get all orders (admin)
+app.get("/api/admin/orders", (req, res) => {
+  const orders = JSON.parse(fs.readFileSync(ORDERS_FILE));
+  res.json(orders);
 });
 
-// Start server
+// Get orders for specific phone number (butcher or customer view)
+app.get("/api/orders/by-phone", (req, res) => {
+  const { phone } = req.query;
+  if (!phone) {
+    return res.status(400).json({ error: "Phone number required" });
+  }
+
+  const orders = JSON.parse(fs.readFileSync(ORDERS_FILE));
+  const filtered = orders.filter(order => order.phone === phone);
+  res.json(filtered);
+});
+
+// Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

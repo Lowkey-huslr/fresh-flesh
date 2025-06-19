@@ -1,0 +1,71 @@
+<!-- File: admin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel | Fresh Flesh</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+    <h1 class="text-2xl font-bold mb-4 text-center">Admin Panel - Butcher Management</h1>
+    
+    <div class="overflow-x-auto">
+      <table class="w-full table-auto border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-red-600 text-white">
+            <th class="border border-gray-300 px-4 py-2">Name</th>
+            <th class="border border-gray-300 px-4 py-2">Mobile</th>
+            <th class="border border-gray-300 px-4 py-2">Action</th>
+          </tr>
+        </thead>
+        <tbody id="butcher-table-body" class="text-center">
+          <!-- Butcher rows inserted by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const tableBody = document.getElementById("butcher-table-body");
+    let butchers = JSON.parse(localStorage.getItem("butchers") || "[]");
+
+    function renderTable() {
+      tableBody.innerHTML = "";
+
+      if (butchers.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="3" class="py-4 text-gray-500">No butchers found.</td></tr>`;
+        return;
+      }
+
+      butchers.forEach((b, index) => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td class="border px-4 py-2">${b.name}</td>
+          <td class="border px-4 py-2">${b.mobile}</td>
+          <td class="border px-4 py-2">
+            <button onclick="deleteButcher(${index})"
+              class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">
+              Delete
+            </button>
+          </td>
+        `;
+
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function deleteButcher(index) {
+      if (confirm("Are you sure you want to delete this butcher?")) {
+        butchers.splice(index, 1);
+        localStorage.setItem("butchers", JSON.stringify(butchers));
+        renderTable();
+      }
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>

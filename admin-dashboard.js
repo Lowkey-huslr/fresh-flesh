@@ -1,38 +1,41 @@
 // File: admin-dashboard.js
 
-if (localStorage.getItem("adminLoggedIn") !== "true") {
-  window.location.href = "admin-login.html";
-}
+function loadButchers() {
+  const list = document.getElementById("butcher-list");
+  list.innerHTML = "";
 
-const butchers = JSON.parse(localStorage.getItem("butchers") || "[]");
-const summaryContainer = document.getElementById("butcher-sales");
+  const butchers = JSON.parse(localStorage.getItem("butchers") || "[]");
 
-butchers.forEach(butcher => {
-  const orders = JSON.parse(localStorage.getItem(`orders-${butcher.mobile}`) || "[]");
+  if (butchers.length === 0) {
+    list.innerHTML = "<p class='text-center text-gray-500'>No butchers registered yet.</p>";
+    return;
+  }
 
-  let totalOrders = orders.length;
-  let totalQty = 0;
+  butchers.forEach((b, index) => {
+    const div = document.createElement("div");
+    div.className = "flex justify-between items-center border p-2 rounded mb-2 bg-white";
 
-  orders.forEach(order => {
-    order.items.forEach(item => {
-      totalQty += parseFloat(item.qty);
-    });
+    div.innerHTML = `
+      <div>
+        <p class="font-semibold">${b.name}</p>
+        <p class="text-sm text-gray-600">📱 ${b.mobile}</p>
+      </div>
+      <button onclick="deleteButcher(${index})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Delete</button>
+    `;
+
+    list.appendChild(div);
   });
-
-  const div = document.createElement("div");
-  div.className = "bg-white p-4 rounded shadow";
-
-  div.innerHTML = `
-    <h3 class="text-lg font-semibold mb-2">${butcher.name} (${butcher.mobile})</h3>
-    <p>📦 Total Orders: <strong>${totalOrders}</strong></p>
-    <p>🍖 Total Meat Sold: <strong>${totalQty} kg</strong></p>
-  `;
-
-  summaryContainer.appendChild(div);
-});
-
-// Logout
-function logout() {
-  localStorage.removeItem("adminLoggedIn");
-  window.location.href = "admin-login.html";
 }
+
+function deleteButcher(index) {
+  const butchers = JSON.parse(localStorage.getItem("butchers") || "[]");
+
+  if (confirm(`Are you sure you want to remove ${butchers[index].name}?`)) {
+    butchers.splice(index, 1);
+    localStorage.setItem("butchers", JSON.stringify(butchers));
+    loadButchers();
+  }
+}
+
+// Load butchers when admin dashboard loads
+window.addEventListener("DOMContentLoaded", loadButchers);
