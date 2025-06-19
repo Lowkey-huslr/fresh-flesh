@@ -11,13 +11,14 @@
 
   <!-- Header -->
   <header class="bg-red-700 text-white px-6 py-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold">Fresh Flesh</h1>
+    <h1 class="text-2xl font-bold">🥩 Fresh Flesh</h1>
     <nav>
       <ul class="flex gap-4">
-        <li><a href="#" class="hover:underline">Home</a></li>
-        <li><a href="#" class="hover:underline">Products</a></li>
-        <li><a href="#" class="hover:underline">Cart</a></li>
-        <li><a href="#" class="hover:underline">Login</a></li>
+        <li><a href="index.html" class="hover:underline">Home</a></li>
+        <li><a href="#product-list" class="hover:underline">Products</a></li>
+        <li><a href="cart.html" class="hover:underline">Cart</a></li>
+        <li><a href="customer-login.html" class="hover:underline">Customer Login</a></li>
+        <li><a href="admin-login.html" class="hover:underline">Admin Login</a></li>
       </ul>
     </nav>
   </header>
@@ -25,11 +26,17 @@
   <!-- Hero Section -->
   <section class="bg-pink-100 text-center py-12 px-4">
     <h2 class="text-3xl font-semibold mb-4">Fresh Meat Delivered to Your Doorstep</h2>
-    <p class="mb-6">Quality meat, fast delivery, unbeatable freshness.</p>
-    <button onclick="alert('Explore coming soon!')"
+    <p class="mb-6 text-lg">Quality meat, fast delivery, unbeatable freshness.</p>
+    <button onclick="document.getElementById('product-list').scrollIntoView({ behavior: 'smooth' })"
             class="bg-red-700 text-white px-6 py-2 rounded hover:bg-red-800 transition">
       Explore Products
     </button>
+
+    <!-- Butcher Buttons -->
+    <div class="mt-8 space-x-4">
+      <a href="butcher.html" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Butcher Sign Up</a>
+      <a href="butcher-login.html" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Butcher Sign In</a>
+    </div>
   </section>
 
   <!-- Products Section -->
