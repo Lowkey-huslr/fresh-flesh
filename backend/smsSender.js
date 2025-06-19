@@ -1,23 +1,25 @@
-// File: backend/smsSender.js
 const axios = require("axios");
 
-async function sendSMS(toNumber, message) {
+async function sendSMS(toNumber, otp) {
   const payload = {
-    sender_id: "FSTSMS",
+    route: "q", // promotional route
+    message: `Your Fresh Flesh OTP is ${otp}`,
     language: "english",
-    route: "q", // 'q' or 'qt' depending on template type
+    flash: 0,
     numbers: toNumber,
-    message: message, // Use your approved message template ID
-    variables_values: "CustomerName|OrderDetails", // only used if message is template with variables
   };
 
   try {
-    const response = await axios.post("https://www.fast2sms.com/dev/bulkV2", payload, {
-      headers: {
-        Authorization: "dSiTA2x59kPYEvO70z1btIgcpyhMlXDBNj6U3oawHRq4VLeQfsGKgeRpI9ctDbV3B8rwNzOlPhqCMm1Q",
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await axios.post(
+      "https://www.fast2sms.com/dev/bulkV2",
+      payload,
+      {
+        headers: {
+          authorization: "dSiTA2x59kPYEvO70z1btIgcpyhMlXDBNj6U3oawHRq4VLeQfsGKgeRpI9ctDbV3B8rwNzOlPhqCMm1Q",
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     return response.data;
   } catch (err) {
