@@ -1,0 +1,56 @@
+<!-- File: payment.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Select Payment | Fresh Flesh</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <header class="bg-red-700 text-white px-6 py-4 text-center">
+    <h1 class="text-2xl font-bold">Choose Payment Method</h1>
+  </header>
+
+  <section class="max-w-xl mx-auto p-6 mt-6 bg-white rounded shadow">
+    <h2 class="text-lg font-semibold mb-4">Select how you'd like to pay</h2>
+
+    <!-- Payment Options -->
+    <div class="space-y-4">
+      <!-- UPI Option -->
+      <div class="border rounded p-4 shadow">
+        <h3 class="font-semibold mb-2">Pay with UPI</h3>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png" alt="PhonePe QR" class="w-40 mb-2" />
+        <img src="upi-qr.jpg" alt="Your UPI QR Code" class="mb-2 w-48 mx-auto rounded shadow" />
+        <p class="text-sm text-gray-500">Scan this QR with any UPI app.</p>
+        <button onclick="confirmPayment('UPI')" class="bg-green-600 text-white px-4 py-2 mt-3 rounded hover:bg-green-700">
+          I've Paid
+        </button>
+      </div>
+
+      <!-- COD Option -->
+      <div class="border rounded p-4 shadow">
+        <h3 class="font-semibold mb-2">Cash on Delivery</h3>
+        <p class="text-sm text-gray-600">Pay the delivery person when your order arrives.</p>
+        <button onclick="confirmPayment('COD')" class="bg-blue-600 text-white px-4 py-2 mt-3 rounded hover:bg-blue-700">
+          Choose COD
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function confirmPayment(method) {
+      const order = JSON.parse(localStorage.getItem("pendingOrder"));
+      if (!order) return alert("No order found.");
+
+      order.paymentMethod = method;
+      localStorage.setItem("lastOrder", JSON.stringify(order));
+      localStorage.removeItem("pendingOrder");
+
+      window.location.href = "confirmation.html";
+    }
+  </script>
+</body>
+</html>

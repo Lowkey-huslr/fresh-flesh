@@ -1,0 +1,32 @@
+<!-- File: confirmation.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Placed | Fresh Flesh</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <header class="bg-green-600 text-white px-6 py-4">
+    <h1 class="text-2xl font-bold">✅ Order Confirmed</h1>
+  </header>
+
+  <main class="max-w-2xl mx-auto py-12 px-6 bg-white rounded shadow mt-8">
+    <h2 class="text-xl font-semibold mb-4 text-center">🎉 Thank you for your order!</h2>
+    <p class="text-center mb-6">A confirmation SMS has been sent to your number.</p>
+
+    <div id="order-summary" class="space-y-3 text-sm"></div>
+
+    <div class="mt-6 text-center">
+      <a href="index.html"
+         class="bg-red-700 text-white px-6 py-2 rounded hover:bg-red-800 inline-block">
+        Back to Home
+      </a>
+    </div>
+  </main>
+
+  <script src="confirmation.js"></script>
+</body>
+</html>

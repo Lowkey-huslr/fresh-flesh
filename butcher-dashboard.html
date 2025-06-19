@@ -1,0 +1,160 @@
+<!-- File: butcher-dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Butcher Dashboard | Fresh Flesh</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-red-700 text-white px-6 py-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Welcome, <span id="butcher-name"></span></h1>
+    <button onclick="logout()" class="bg-white text-red-700 px-4 py-2 rounded hover:bg-red-100">Logout</button>
+  </header>
+
+  <main class="max-w-4xl mx-auto py-10 px-4">
+
+    <!-- Add Product -->
+    <section class="bg-white p-6 rounded shadow mb-8">
+      <h2 class="text-xl font-semibold mb-4">➕ Add Product</h2>
+      <form id="add-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" id="meat-name" placeholder="Meat Name (e.g., Chicken)"
+               class="border px-4 py-2 rounded" required />
+        <input type="number" id="meat-price" placeholder="Price per kg"
+               class="border px-4 py-2 rounded" required />
+        <button type="submit"
+                class="bg-green-600 text-white py-2 px-6 rounded col-span-2 hover:bg-green-700">
+          Add
+        </button>
+      </form>
+    </section>
+
+    <!-- Product List -->
+    <section class="bg-white p-6 rounded shadow mb-8">
+      <h2 class="text-xl font-semibold mb-4">📦 Your Products</h2>
+      <ul id="product-list" class="space-y-4"></ul>
+    </section>
+
+    <!-- Orders Received -->
+    <section class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-semibold mb-4">📬 Orders Received</h2>
+      <ul id="order-list" class="space-y-4"></ul>
+    </section>
+
+  </main>
+
+  <script>
+    const butcher = JSON.parse(localStorage.getItem("butcherLoggedIn"));
+    if (!butcher) {
+      window.location.href = "butcher-login.html";
+    }
+
+    document.getElementById("butcher-name").textContent = butcher.name;
+
+    const productList = document.getElementById("product-list");
+    const orderList = document.getElementById("order-list");
+    const productKey = `products-${butcher.mobile}`;
+    const orderKey = `orders-${butcher.mobile}`;
+
+    // Load Products
+    function loadProducts() {
+      const products = JSON.parse(localStorage.getItem(productKey)) || [];
+      productList.innerHTML = "";
+
+      products.forEach((p, i) => {
+        const li = document.createElement("li");
+        li.className = "border p-4 rounded flex justify-between items-center";
+
+        li.innerHTML = `
+          <div>
+            <h3 class="text-lg font-semibold">${p.meatName}</h3>
+            <p class="text-gray-600">₹${p.meatPrice}/kg</p>
+          </div>
+          <div class="space-x-2">
+            <button onclick="editProduct(${i})" class="text-blue-600">Edit</button>
+            <button onclick="deleteProduct(${i})" class="text-red-600">Delete</button>
+          </div>
+        `;
+
+        productList.appendChild(li);
+      });
+    }
+
+    // Add Product
+    document.getElementById("add-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("meat-name").value.trim();
+      const price = parseInt(document.getElementById("meat-price").value);
+
+      if (!name || isNaN(price)) return alert("Invalid input");
+
+      const products = JSON.parse(localStorage.getItem(productKey)) || [];
+      products.push({ meatName: name, meatPrice: price });
+      localStorage.setItem(productKey, JSON.stringify(products));
+
+      e.target.reset();
+      loadProducts();
+    });
+
+    // Edit Product
+    function editProduct(index) {
+      const products = JSON.parse(localStorage.getItem(productKey)) || [];
+      const item = products[index];
+
+      const newName = prompt("Edit meat name:", item.meatName);
+      const newPrice = prompt("Edit price:", item.meatPrice);
+
+      if (newName && newPrice && !isNaN(newPrice)) {
+        products[index] = { meatName: newName, meatPrice: parseInt(newPrice) };
+        localStorage.setItem(productKey, JSON.stringify(products));
+        loadProducts();
+      }
+    }
+
+    // Delete Product
+    function deleteProduct(index) {
+      const products = JSON.parse(localStorage.getItem(productKey)) || [];
+      products.splice(index, 1);
+      localStorage.setItem(productKey, JSON.stringify(products));
+      loadProducts();
+    }
+
+    // Load Orders
+    function loadOrders() {
+      const orders = JSON.parse(localStorage.getItem(orderKey)) || [];
+      orderList.innerHTML = "";
+
+      if (orders.length === 0) {
+        orderList.innerHTML = `<li class="text-gray-600">No orders yet.</li>`;
+        return;
+      }
+
+      orders.forEach(order => {
+        const li = document.createElement("li");
+        li.className = "border p-4 rounded";
+
+        li.innerHTML = `
+          <p><strong>Customer:</strong> ${order.customerName}</p>
+          <p><strong>Location:</strong> ${order.address}</p>
+          <p><strong>Items:</strong> ${order.items.map(i => `${i.name} x${i.qty}kg`).join(", ")}</p>
+        `;
+
+        orderList.appendChild(li);
+      });
+    }
+
+    // Logout
+    function logout() {
+      localStorage.removeItem("butcherLoggedIn");
+      window.location.href = "butcher-login.html";
+    }
+
+    // Init
+    loadProducts();
+    loadOrders();
+  </script>
+</body>
+</html>

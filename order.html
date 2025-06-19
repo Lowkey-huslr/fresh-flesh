@@ -1,0 +1,58 @@
+<!-- File: order.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Meat | Fresh Flesh</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-red-700 text-white px-6 py-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Fresh Flesh - Place Order</h1>
+    <nav>
+      <a href="index.html" class="hover:underline">Home</a>
+    </nav>
+  </header>
+
+  <!-- Main Section -->
+  <section class="p-6 max-w-4xl mx-auto">
+
+    <!-- Butcher Selection -->
+    <label for="butcher-select" class="block font-bold mb-2">Choose Butcher</label>
+    <select id="butcher-select" class="w-full border px-4 py-2 rounded mb-6"></select>
+
+    <!-- Products -->
+    <h2 class="text-xl font-semibold mb-4">Available Products</h2>
+    <div id="product-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+
+    <!-- Cart -->
+    <h2 class="text-xl font-semibold mt-10 mb-2">🛒 Cart</h2>
+    <ul id="cart-list" class="space-y-2 mb-4"></ul>
+
+    <!-- Customer Info -->
+    <h2 class="text-xl font-semibold mt-8 mb-2">🧍 Customer Details</h2>
+
+    <input type="text" id="customer-name" placeholder="Your Name"
+           class="w-full border px-4 py-2 rounded mb-2" />
+
+    <input type="tel" id="customer-phone" placeholder="Phone Number (10 digits)"
+           class="w-full border px-4 py-2 rounded mb-2" pattern="[0-9]{10}" maxlength="10" />
+
+    <textarea id="delivery-address" placeholder="Delivery Address"
+              class="w-full border px-4 py-2 rounded mb-4 h-24 resize-none"></textarea>
+
+    <!-- Place Order Button -->
+    <button onclick="placeOrder()" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+      Confirm Order
+    </button>
+
+    <!-- Order Success Message -->
+    <p id="order-success" class="text-green-600 mt-4 hidden">✅ Order placed successfully!</p>
+  </section>
+
+  <script src="order.js"></script>
+</body>
+</html>
