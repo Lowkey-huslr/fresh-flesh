@@ -1,2 +1,2 @@
-# fresh-flesh
-Fresh meat delivery website
+# Fresh Flesh
+This is my meat delivery app.
